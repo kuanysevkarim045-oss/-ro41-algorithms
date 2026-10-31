@@ -1,7 +1,7 @@
 1. Базовый случай и шаг рекурсииБазовый случай: if (n <= 1) return 1;Останавливает рекурсию при $n \le 1$ и возвращает 1.
 Шаг рекурсии: return n * F(n - 1);Вызывает функцию с уменьшенным на 1 аргументом и умножает результат на $n$.
 
-2. public class RecursionTrace {
+public class RecursionTrace {
 
     // Функция с отладочным выводом для трассировки
     public static int traceF(int n, int depth) {
