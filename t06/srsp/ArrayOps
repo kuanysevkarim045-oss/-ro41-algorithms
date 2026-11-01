@@ -1,0 +1,82 @@
+
+public static class ArrayOps
+{
+    // 1. Сумма элементов массива
+    public static int Sum(int[] a)
+    {
+        int sum = 0;
+        for (int i = 0; i < a.Length; i++)
+        {
+            sum += a[i];
+        }
+        return sum;
+    }
+
+    // 2. Индекс первого минимального элемента (начальное значение из массива)
+    public static int IndexOfMin(int[] a)
+    {
+        int minIndex = 0;
+        for (int i = 1; i < a.Length; i++)
+        {
+            if (a[i] < a[minIndex])
+            {
+                minIndex = i;
+            }
+        }
+        return minIndex;
+    }
+
+    // 3. Количество элементов, строго больших x
+    public static int CountGreater(int[] a, int x)
+    {
+        int count = 0;
+        for (int i = 0; i < a.Length; i++)
+        {
+            if (a[i] > x)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // 4. Разворот массива на месте
+    public static void Reverse(int[] a)
+    {
+        int n = a.Length;
+        for (int i = 0; i < n / 2; i++)
+        {
+            int temp = a[i];
+            a[i] = a[n - 1 - i];
+            a[n - 1 - i] = temp;
+        }
+    }
+}
+
+class Program
+{
+    // Вспомогательный метод для тестирования и вывода информации
+    static void RunTest(int[] original)
+    {
+        // Создаем копию массива, чтобы изменения от Reverse не ломали вывод исходного состояния
+        int[] a = (int[])original.Clone();
+
+        Console.WriteLine($"Исходный массив: {{{string.Join(", ", a)}}}");
+        Console.WriteLine($"Сумма: {ArrayOps.Sum(a)}");
+        Console.WriteLine($"Индекс минимума: {ArrayOps.IndexOfMin(a)}");
+        Console.WriteLine($"Количество элементов > 2: {ArrayOps.CountGreater(a, 2)}");
+        
+        ArrayOps.Reverse(a);
+        Console.WriteLine($"Массив после Reverse: {{{string.Join(", ", a)}}}");
+        Console.WriteLine(new string('-', 35));
+    }
+
+    static void Main(string[] args)
+    {
+        // Проверка на требуемых массивах
+        RunTest(new int[] { 4, 1, 7, 3, 9 });
+        RunTest(new int[] { 5 });
+        RunTest(new int[] { -2, -7, -4 });
+        RunTest(new int[] { 2, 2, 2 });
+    }
+}
