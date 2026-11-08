@@ -1,47 +1,123 @@
-# Трассировка и результаты тестирования класса TextTools
+using System;
+using System.Text;
 
-Ниже приведены таблицы проверки всех четырех методов класса `TextTools` для заданных тестовых строк.
+namespace TextToolsApp
+{
+    public static class TextTools
+    {
+        // 1. Количество слов (лишние пробелы не считаются)
+        public static int CountWords(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                return 0;
+            }
 
----
+            int count = 0;
+            bool inWord = false;
 
-## 1. Метод `CountWords(string s)` — подсчет количества слов
-| Входная строка (`s`) | Ожидаемое значение | Фактическое значение | Статус |
-| :--- | :---: | :---: | :---: |
-| `""` (пустая) | `0` | `0` | **OK** |
-| `"    "` (пробелы) | `0` | `0` | **OK** |
-| `" a  b "` | `2` | `2` | **OK** |
-| `"А роза упала на лапу Азора"` | `6` | `6` | **OK** |
-| `"Ахметов Ерлан"` | `2` | `2` | **OK** |
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (!char.IsWhiteSpace(s[i]))
+                {
+                    if (!inWord)
+                    {
+                        inWord = true;
+                        count++;
+                    }
+                }
+                else
+                {
+                    inWord = false;
+                }
+            }
 
----
+            return count;
+        }
 
-## 2. Метод `IsPalindrome(string s)` — проверка палиндрома
-| Входная строка (`s`) | Ожидаемое значение | Фактическое значение | Статус |
-| :--- | :---: | :---: | :---: |
-| `""` (пустая) | `true` | `true` | **OK** |
-| `"    "` (пробелы) | `true` | `true` | **OK** |
-| `" a  b "` | `false` | `false` | **OK** |
-| `"А роза упала на лапу Азора"` | `true` | `true` | **OK** |
-| `"Ахметов Ерлан"` | `false` | `false` | **OK** |
+        // 2. Проверка палиндрома без учета регистра и пробелов
+        public static bool IsPalindrome(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return true;
+            }
 
----
+            int left = 0;
+            int right = s.Length - 1;
 
-## 3. Метод `Initials(string fullName)` — получение инициалов
-| Входная строка (`fullName`) | Ожидаемое значение | Фактическое значение | Статус |
-| :--- | :---: | :---: | :---: |
-| `""` (пустая) | `""` | `""` | **OK** |
-| `"    "` (пробелы) | `""` | `""` | **OK** |
-| `" a  b "` | `"A. B."` | `"A. B."` | **OK** |
-| `"Ахметов Ерлан"` | `"А. Е."` | `"А. Е."` | **OK** |
-| `"Ахметов Ерлан Серикұлы"` | `"А. Е. С."` | `"А. Е. С."` | **OK** |
+            while (left < right)
+            {
+                while (left < right && char.IsWhiteSpace(s[left]))
+                {
+                    left++;
+                }
 
----
+                while (left < right && char.IsWhiteSpace(s[right]))
+                {
+                    right--;
+                }
 
-## 4. Метод `Repeat(string s, int n)` — повторение строки через StringBuilder
-| Входные данные (`s`, `n`) | Ожидаемое значение | Фактическое значение | Статус |
-| :--- | :---: | :---: | :---: |
-| `"", 5` | `""` | `""` | **OK** |
-| `"    ", 3` | `"            "` | `"            "` | **OK** |
-| `" a  b ", 2` | `" a  b  a  b "` | `" a  b  a  b "` | **OK** |
-| `"Test", 0` | `""` | `""` | **OK** |
-| `"abc", 3` | `"abcabcabc"` | `"abcabcabc"` | **OK** |
+                if (char.ToLower(s[left]) != char.ToLower(s[right]))
+                {
+                    return false;
+                }
+
+                left++;
+                right--;
+            }
+
+            return true;
+        }
+
+        // 3. Формирование инициалов ("Ахметов Ерлан Серикұлы" -> "А. Е. С.")
+        public static string Initials(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                return string.Empty;
+            }
+
+            StringBuilder result = new StringBuilder();
+            bool newWord = true;
+
+            for (int i = 0; i < fullName.Length; i++)
+            {
+                char c = fullName[i];
+
+                if (char.IsWhiteSpace(c))
+                {
+                    newWord = true;
+                }
+                else if (newWord)
+                {
+                    if (result.Length > 0)
+                    {
+                        result.Append(' ');
+                    }
+                    result.Append(char.ToUpper(c)).Append('.');
+                    newWord = false;
+                }
+            }
+
+            return result.ToString();
+        }
+
+        // 4. Повторение строки n раз через StringBuilder
+        public static string Repeat(string s, int n)
+        {
+            if (string.IsNullOrEmpty(s) || n <= 0)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder sb = new StringBuilder(s.Length * n);
+            for (int i = 0; i < n; i++)
+            {
+                sb.Append(s);
+            }
+
+            return sb.ToString();
+        }
+    }
+}
