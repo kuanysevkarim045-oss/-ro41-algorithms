@@ -1,0 +1,153 @@
+using System;
+
+public static class ArrayAlgos
+{
+    // 1. Проверка, что массив отсортирован по неубыванию (возрастанию)
+    public static bool IsSorted(int[] a)
+    {
+        if (a == null || a.Length <= 1)
+            return true;
+
+        for (int i = 0; i < a.Length - 1; i++)
+        {
+            if (a[i] > a[i + 1])
+                return false;
+        }
+
+        return true;
+    }
+
+    // 2. Сортировка пузырьком на месте с флажком раннего выхода
+    // Возвращает число сравнений
+    public static int BubbleSort(int[] a)
+    {
+        if (a == null || a.Length <= 1)
+            return 0;
+
+        int comparisons = 0;
+        int n = a.Length;
+
+        for (int i = 0; i < n - 1; i++)
+        {
+            bool swapped = false;
+            for (int j = 0; j < n - 1 - i; j++)
+            {
+                comparisons++;
+                if (a[j] > a[j + 1])
+                {
+                    int temp = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+
+            // Если за проход не было ни одного обмена, массив уже отсортирован
+            if (!swapped)
+                break;
+        }
+
+        return comparisons;
+    }
+
+    // Вспомогательный метод: Нижняя граница (первый индекс элементов >= x)
+    private static int LowerBound(int[] a, int x)
+    {
+        int lo = 0;
+        int hi = a.Length; // [lo, hi)
+
+        while (lo < hi)
+        {
+            int mid = lo + (hi - lo) / 2;
+            if (a[mid] >= x)
+                hi = mid;
+            else
+                lo = mid + 1;
+        }
+
+        return lo;
+    }
+
+    // Вспомогательный метод: Верхняя граница (первый индекс элементов > x)
+    private static int UpperBound(int[] a, int x)
+    {
+        int lo = 0;
+        int hi = a.Length; // [lo, hi)
+
+        while (lo < hi)
+        {
+            int mid = lo + (hi - lo) / 2;
+            if (a[mid] > x)
+                hi = mid;
+            else
+                lo = mid + 1;
+        }
+
+        return lo;
+    }
+
+    // 3. Подсчет количества вхождений x в отсортированном массиве через два бинарных поиска
+    public static int CountOccurrences(int[] sortedA, int x)
+    {
+        if (sortedA == null || sortedA.Length == 0)
+            return 0;
+
+        int first = LowerBound(sortedA, x);
+        int last = UpperBound(sortedA, x);
+
+        return last - first;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== ТЕСТИРОВАНИЕ BUBBLESORT ===\n");
+
+        int[][] testArrays = new int[][]
+        {
+            new int[] { },
+            new int[] { 5 },
+            new int[] { 1, 2, 3, 4, 5 },
+            new int[] { 5, 4, 3, 2, 1 },
+            new int[] { 3, 1, 3, 2, 3 }
+        };
+
+        foreach (var arr in testArrays)
+        {
+            // Создаем копию для изменения "на месте"
+            int[] arrCopy = (int[])arr.Clone();
+
+            Console.WriteLine($"До:    [{string.Join(", ", arr)}]");
+            int comparisons = ArrayAlgos.BubbleSort(arrCopy);
+            bool sorted = ArrayAlgos.IsSorted(arrCopy);
+
+            Console.WriteLine($"После: [{string.Join(", ", arrCopy)}]");
+            Console.WriteLine($"IsSorted: {sorted}, Сравнений: {comparisons}");
+            Console.WriteLine(new string('-', 40));
+        }
+
+        // Проверка на отсортированном массиве из 1000 элементов
+        int[] sorted1000 = new int[1000];
+        for (int i = 0; i < 1000; i++)
+            sorted1000[i] = i;
+
+        int comps1000 = ArrayAlgos.BubbleSort(sorted1000);
+        Console.WriteLine($"Отсортированный массив из 1000 элементов -> Сравнений: {comps1000} (Ожидается: 999)\n");
+
+
+        Console.WriteLine("\n=== ТЕСТИРОВАНИЕ COUNTOCCURRENCES ===\n");
+
+        int[] occurrencesArray = new int[] { 1, 2, 2, 2, 5, 7 };
+        int[] targets = new int[] { 2, 1, 7, 3, 9 };
+
+        Console.WriteLine($"Массив: [{string.Join(", ", occurrencesArray)}]\n");
+
+        foreach (int x in targets)
+        {
+            int count = ArrayAlgos.CountOccurrences(occurrencesArray, x);
+            Console.WriteLine($"Число {x}: {count} вхождений");
+        }
+    }
+}
