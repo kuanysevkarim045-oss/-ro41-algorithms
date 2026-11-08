@@ -1,135 +1,73 @@
 using System;
-using System.Text;
 
 namespace TextToolsApp
 {
-    public static class TextTools
+    class Program
     {
-        /// <summary>
-        /// 1. Подсчет количества слов (лишние пробелы не учитываются).
-        /// </summary>
-        public static int CountWords(string s)
+        static void Main(string[] args)
         {
-            if (string.IsNullOrWhiteSpace(s))
-            {
-                return 0;
-            }
+            Console.WriteLine("=== ТЕСТИРОВАНИЕ КЛАССА TextTools ===\n");
 
-            int count = 0;
-            bool inWord = false;
+            // Тесты для CountWords
+            Console.WriteLine("--- 1. Тесты метода CountWords ---");
+            RunWordCountTest("", 0);
+            RunWordCountTest("    ", 0);
+            RunWordCountTest(" a  b ", 2);
+            RunWordCountTest("Ахметов Ерлан", 2);
+            Console.WriteLine();
 
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (!char.IsWhiteSpace(s[i]))
-                {
-                    if (!inWord)
-                    {
-                        inWord = true;
-                        count++;
-                    }
-                }
-                else
-                {
-                    inWord = false;
-                }
-            }
+            // Тесты для IsPalindrome
+            Console.WriteLine("--- 2. Тесты метода IsPalindrome ---");
+            RunPalindromeTest("", true);
+            RunPalindromeTest("    ", true);
+            RunPalindromeTest("А роза упала на лапу Азора", true);
+            RunPalindromeTest("Ахметов Ерлан", false);
+            Console.WriteLine();
 
-            return count;
+            // Тесты для Initials
+            Console.WriteLine("--- 3. Тесты метода Initials ---");
+            RunInitialsTest("", "");
+            RunInitialsTest("   ", "");
+            RunInitialsTest("Ахметов Ерлан", "А. Е.");
+            RunInitialsTest("Ахметов Ерлан Серикұлы", "А. Е. С.");
+            Console.WriteLine();
+
+            // Тесты для Repeat
+            Console.WriteLine("--- 4. Тесты метода Repeat ---");
+            RunRepeatTest("abc", 3, "abcabcabc");
+            RunRepeatTest("", 5, "");
+            RunRepeatTest("Test", 0, "");
+            Console.WriteLine();
         }
 
-        /// <summary>
-        /// 2. Проверка, является ли строка палиндромом (без учета регистра и пробелов).
-        /// </summary>
-        public static bool IsPalindrome(string s)
+        static void RunWordCountTest(string input, int expected)
         {
-            if (string.IsNullOrEmpty(s))
-            {
-                return true; // Пустую строку условно считаем палиндромом
-            }
-
-            int left = 0;
-            int right = s.Length - 1;
-
-            while (left < right)
-            {
-                // Пропускаем пробелы слева
-                while (left < right && char.IsWhiteSpace(s[left]))
-                {
-                    left++;
-                }
-
-                // Пропускаем пробелы справа
-                while (left < right && char.IsWhiteSpace(s[right]))
-                {
-                    right--;
-                }
-
-                // Сравниваем символы без учета регистра
-                if (char.ToLower(s[left]) != char.ToLower(s[right]))
-                {
-                    return false;
-                }
-
-                left++;
-                right--;
-            }
-
-            return true;
+            int actual = TextTools.CountWords(input);
+            PrintResult(input, expected, actual);
         }
 
-        /// <summary>
-        /// 3. Получение инициалов из полного имени ("Ахметов Ерлан Серикұлы" -> "А. Е. С.").
-        /// </summary>
-        public static string Initials(string fullName)
+        static void RunPalindromeTest(string input, bool expected)
         {
-            if (string.IsNullOrWhiteSpace(fullName))
-            {
-                return string.Empty;
-            }
-
-            // Разобьем строку на слова вручную без использования LINQ и Split с массивами
-            StringBuilder result = new StringBuilder();
-            bool newWord = true;
-
-            for (int i = 0; i < fullName.Length; i++)
-            {
-                char c = fullName[i];
-
-                if (char.IsWhiteSpace(c))
-                {
-                    newWord = true;
-                }
-                else if (newWord)
-                {
-                    if (result.Length > 0)
-                    {
-                        result.Append(' ');
-                    }
-                    result.Append(char.ToUpper(c)).Append('.');
-                    newWord = false;
-                }
-            }
-
-            return result.ToString();
+            bool actual = TextTools.IsPalindrome(input);
+            PrintResult(input, expected, actual);
         }
 
-        /// <summary>
-        /// 4. Повторение строки n раз с использованием StringBuilder.
-        /// </summary>
-        public static string Repeat(string s, int n)
+        static void RunInitialsTest(string input, string expected)
         {
-            if (string.IsNullOrEmpty(s) || n <= 0)
-            {
-                return string.Empty;
-            }
+            string actual = TextTools.Initials(input);
+            PrintResult(input, expected, actual);
+        }
 
-            StringBuilder sb = new StringBuilder(s.Length * n);
-            for (int i = 0; i < n; i++)
-            {
-                sb.Append(s);
-            }
+        static void RunRepeatTest(string input, int n, string expected)
+        {
+            string actual = TextTools.Repeat(input, n);
+            PrintResult($"\"{input}\", n={n}", expected, actual);
+        }
 
-            return sb.ToString();
+        static void PrintResult<T>(string input, T expected, T actual)
+        {
+            string status = expected.Equals(actual) ? "OK" : "FAIL";
+            Console.WriteLine($"Вход: [{input}] | Ожидание: [{expected}] | Факт: [{actual}] | Статус: {status}");
         }
     }
 }
