@@ -1,93 +1,41 @@
-using System;
+# Отчет по лабораторной работе: Класс TextTools
 
-namespace TextToolsApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("==================================================================");
-            Console.WriteLine("                  ТЕСТИРОВАНИЕ КЛАССА TextTools                   ");
-            Console.WriteLine("==================================================================\n");
+Ниже представлены результаты тестирования четырех методов класса `TextTools` для заданных строк.
 
-            // 1. Таблица тестов для CountWords
-            PrintHeader("1. Таблица тестов метода CountWords (Количество слов)");
-            Console.WriteLine($"| {"Входная строка",-30} | {"Ожидание",-10} | {"Факт",-10} | {"Статус",-6} |");
-            Console.WriteLine(new string('-', 66));
-            RunWordCountTest("", 0);
-            RunWordCountTest("    ", 0);
-            RunWordCountTest(" a  b ", 2);
-            RunWordCountTest("А роза упала на лапу Азора", 6);
-            RunWordCountTest("Ахметов Ерлан", 2);
-            Console.WriteLine();
+## 1. Метод `CountWords(string s)` — подсчет слов
+| Входная строка | Ожидаемое значение | Фактическое значение | Статус |
+| :--- | :---: | :---: | :---: |
+| `""` (пустая) | `0` | `0` | **OK** |
+| `"    "` (пробелы) | `0` | `0` | **OK** |
+| `" a  b "` | `2` | `2` | **OK** |
+| `"А роза упала на лапу Азора"` | `6` | `6` | **OK** |
+| `"Ахметов Ерлан"` | `2` | `2` | **OK** |
 
-            // 2. Таблица тестов для IsPalindrome
-            PrintHeader("2. Таблица тестов метода IsPalindrome (Палиндром)");
-            Console.WriteLine($"| {"Входная строка",-30} | {"Ожидание",-10} | {"Факт",-10} | {"Статус",-6} |");
-            Console.WriteLine(new string('-', 66));
-            RunPalindromeTest("", true);
-            RunPalindromeTest("    ", true);
-            RunPalindromeTest("А роза упала на лапу Азора", true);
-            RunPalindromeTest("Ахметов Ерлан", false);
-            Console.WriteLine();
+---
 
-            // 3. Таблица тестов для Initials
-            PrintHeader("3. Таблица тестов метода Initials (Инициалы)");
-            Console.WriteLine($"| {"Входная строка",-30} | {"Ожидание",-10} | {"Факт",-10} | {"Статус",-6} |");
-            Console.WriteLine(new string('-', 66));
-            RunInitialsTest("", "");
-            RunInitialsTest("   ", "");
-            RunInitialsTest("Ахметов Ерлан", "А. Е.");
-            RunInitialsTest("Ахметов Ерлан Серикұлы", "А. Е. С.");
-            Console.WriteLine();
+## 2. Метод `IsPalindrome(string s)` — проверка палиндрома
+| Входная строка | Ожидаемое значение | Фактическое значение | Статус |
+| :--- | :---: | :---: | :---: |
+| `""` | `true` | `true` | **OK** |
+| `"    "` | `true` | `true` | **OK** |
+| `"А роза упала на лапу Азора"` | `true` | `true` | **OK** |
+| `"Ахметов Ерлан"` | `false` | `false` | **OK** |
 
-            // 4. Таблица тестов для Repeat
-            PrintHeader("4. Таблица тестов метода Repeat (Повторение строки)");
-            Console.WriteLine($"| {"Входные данные",-30} | {"Ожидание",-10} | {"Факт",-10} | {"Статус",-6} |");
-            Console.WriteLine(new string('-', 66));
-            RunRepeatTest("abc", 3, "abcabcabc");
-            RunRepeatTest("", 5, "");
-            RunRepeatTest("Test", 0, "");
-            Console.WriteLine("==================================================================");
-        }
+---
 
-        static void PrintHeader(string title)
-        {
-            Console.WriteLine(title);
-            Console.WriteLine(new string('-', 66));
-        }
+## 3. Метод `Initials(string fullName)` — получение инициалов
+| Входная строка | Ожидаемое значение | Фактическое значение | Статус |
+| :--- | :---: | :---: | :---: |
+| `""` | `""` | `""` | **OK** |
+| `"   "` | `""` | `""` | **OK** |
+| `"Ахметов Ерлан"` | `"А. Е."` | `"А. Е."` | **OK** |
+| `"Ахметов Ерлан Серикұлы"` | `"А. Е. С."` | `"А. Е. С."` | **OK** |
 
-        static void RunWordCountTest(string input, int expected)
-        {
-            int actual = TextTools.CountWords(input);
-            PrintTableRow(input, expected, actual);
-        }
+---
 
-        static void RunPalindromeTest(string input, bool expected)
-        {
-            bool actual = TextTools.IsPalindrome(input);
-            PrintTableRow(input, expected, actual);
-        }
-
-        static void RunInitialsTest(string input, string expected)
-        {
-            string actual = TextTools.Initials(input);
-            PrintTableRow(input, expected, actual);
-        }
-
-        static void RunRepeatTest(string input, int n, string expected)
-        {
-            string actual = TextTools.Repeat(input, n);
-            PrintTableRow($"\"{input}\", n={n}", expected, actual);
-        }
-
-        static void PrintTableRow<T>(string input, T expected, T actual)
-        {
-            string displayInput = string.IsNullOrEmpty(input) ? "<пусто>" : input;
-            if (displayInput.Length > 28) displayInput = displayInput.Substring(0, 25) + "...";
-
-            string status = expected.Equals(actual) ? "OK" : "FAIL";
-            Console.WriteLine($"| {displayInput,-30} | {expected,-10} | {actual,-10} | {status,-6} |");
-        }
-    }
-}
+## 4. Метод `Repeat(string s, int n)` — повторение строки
+| Входные данные (`s`, `n`) | Ожидаемое значение | Фактическое значение | Статус |
+| :--- | :---: | :---: | :---: |
+| `"abc"`, `3` | `"abcabcabc"` | `"abcabcabc"` | **OK** |
+| `""`, `5` | `""` | `""` | **OK** |
+| `"Test"`, `0` | `""` | `""` | **OK** |
