@@ -1,43 +1,87 @@
-# Трассировка алгоритмов и работы со строками в C#
+using System;
+using System.Text;
 
-## 1. Трассировка методов Trim() и Split(';')
-Исходная строка: `s = "  Ахметов Ерлан;85 "`
+namespace AlgorithmLab
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            ProcessStringTrimming();
+            ProcessTryParseExample();
+            DemonstrateStringVsStringBuilder();
+            DemonstrateStringImmutability();
+        }
 
-| Этап выполнения | Значение выражения | Длина строки / массива | Описание |
-| :--- | :--- | :---: | :--- |
-| **Исходная строка** | `"  Ахметов Ерлан;85 "` | 19 | Содержит пробелы в начале и в конце |
-| **После `s.Trim()`** | `"Ахметов Ерлан;85"` | 17 | Удалены ведущие и замыкающие пробелы |
-| **После `Split(';')` [0]** | `"Ахметов Ерлан"` | 13 | Первая часть до разделителя `;` |
-| **После `Split(';')` [1]** | `"85"` | 2 | Вторая часть после разделителя `;` |
+        public static void ProcessStringTrimming()
+        {
+            string s = "  Ахметов Ерлан;85 ";
+            string trimmed = s.Trim();
+            string[] parts = trimmed.Split(';');
 
----
+            Console.WriteLine("--- Задание 1: Trim и Split ---");
+            Console.WriteLine($"Исходная строка: \"{s}\"");
+            Console.WriteLine($"После Trim(): \"{trimmed}\" (Длина: {trimmed.Length})");
+            Console.WriteLine($"Элемент [0]: \"{parts[0]}\" (Длина: {parts[0].Length})");
+            Console.WriteLine($"Элемент [1]: \"{parts[1]}\" (Длина: {parts[1].Length})\n");
+        }
 
-## 2. Трассировка int.TryParse
-Строка: `line = "Иванов Пётр;70;85;x"`
+        public static void ProcessTryParseExample()
+        {
+            string line = "Иванов Пётр;70;85;x";
+            bool isValid = TryParseScores(line);
 
-| Индекс массива | Часть строки (`part`) | Результат `int.TryParse` | Значение переменной `out` | Примечание |
-| :---: | :--- | :---: | :---: | :--- |
-| **0** | `"Иванов Пётр"` | `false` | `0` | Содержит буквы и пробел |
-| **1** | `"70"` | `true` | `70` | Успешно спарсено в целое число |
-| **2** | `"85"` | `true` | `85` | Успешно спарсено в целое число |
-| **3** | `"x"` | `false` | `0` | Символ не может быть преобразован |
+            Console.WriteLine("--- Задание 2: int.TryParse ---");
+            Console.WriteLine($"Строка для проверки: \"{line}\"");
+            Console.WriteLine($"Результат TryParseScores: {isValid}\n");
+        }
 
-**Результат метода `TryParseScores`:** `false`, так как элементы под индексами `0` и `3` не являются числами.
+        private static bool TryParseScores(string line)
+        {
+            string[] parts = line.Split(';');
+            foreach (string part in parts)
+            {
+                if (!int.TryParse(part, out int value))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
----
+        public static void DemonstrateStringVsStringBuilder()
+        {
+            Console.WriteLine("--- Задание 3: string vs StringBuilder ---");
 
-## 3. Сравнение string и StringBuilder в цикле (for от 0 до 3)
+            string strResult = "";
+            for (int i = 0; i < 4; i++)
+            {
+                strResult += i; 
+            }
 
-| Шаг / Итерация | Операция с `string` (`s += i`) | Создано объектов `string` | Операция с `StringBuilder` (`sb.Append(i)`) | Создано объектов `StringBuilder` |
-| :--- | :--- | :---: | :--- | :---: |
-| **Инициализация** | `string s = "";` | 1 (`""`) | `StringBuilder sb = new StringBuilder();` | 1 |
-| **Итерация `i = 0`** | `s += 0;` | +1 (`"0"`) | `sb.Append(0);` | 0 |
-| **Итерация `i = 1`** | `s += 1;` | +1 (`"01"`) | `sb.Append(1);` | 0 |
-| **Итерация `i = 2`** | `s += 2;` | +1 (`"012"`) | `sb.Append(2);` | 0 |
-| **Итерация `i = 3`** | `s += 3;` | +1 (`"0123"`) | `sb.Append(3);` | 0 |
-| **ИТОГО:** | — | **5 объектов** | — | **1 объект** |
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 4; i++)
+            {
+                sb.Append(i);
+            }
+            string sbResult = sb.ToString();
 
----
+            Console.WriteLine($"Результат string: {strResult} (Создано 5 объектов string)");
+            Console.WriteLine($"Результат StringBuilder: {sbResult} (Создан 1 объект StringBuilder)\n");
+        }
 
-## 4. Почему s.ToUpper() без присваивания не изменяет s?
-Тип `string` в C# является **неизменяемым (immutable)**. Метод `s.ToUpper()` не меняет исходный объект в памяти, а возвращает *новый* объект с символами в верхнем регистре. Без переприсваивания (`s = s.ToUpper();`) переменная продолжает ссылаться на старый объект.
+        public static void DemonstrateStringImmutability()
+        {
+            string s = "привет";
+            
+            Console.WriteLine("--- Задание 4: Неизменяемость строк ---");
+            Console.WriteLine($"До ToUpper(): {s}");
+
+            s.ToUpper(); 
+            Console.WriteLine($"После s.ToUpper() без присваивания: {s}");
+
+            s = s.ToUpper();
+            Console.WriteLine($"После s = s.ToUpper(): {s}\n");
+        }
+    }
+}
